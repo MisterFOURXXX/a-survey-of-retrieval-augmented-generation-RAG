@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-pipeline"
+version = "0.1.0"
+description = "Modular Retrieval-Augmented Generation pipeline built on LangChain"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Your Name", email = "you@example.com" }]
+keywords = ["rag", "langchain", "retrieval", "generation", "llm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "langchain>=0.3",
+    "langchain-community>=0.3",
+    "langchain-core>=0.3",
+    "langchain-text-splitters>=0.3",
+    "langchain-huggingface>=0.1",
+    "langchain-openai>=0.2",
+    "langchain-ollama>=0.2",
+    "langchain-chroma>=0.1",
+    "langchain-cohere>=0.3",
+    "faiss-cpu>=1.8",
+    "chromadb>=0.5",
+    "sentence-transformers>=3.0",
+    "transformers>=4.44",
+    "accelerate>=1.0",
+    "bitsandbytes>=0.44",
+    "torch>=2.2",
+    "datasets>=3.0",
+    "evaluate>=0.4",
+    "bert-score>=0.3.13",
+    "ragas>=0.2",
+    "pypdf>=5.0",
+    "jq>=1.7",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "sqlalchemy>=2.0",
+    "umap-learn>=0.5",
+    "scikit-learn>=1.5",
+    "matplotlib>=3.9",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "tqdm>=4.66",
+    "pydantic>=2.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "jupytext>=1.16",
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "black>=24.0",
+    "pre-commit>=3.7",
+]
+
+[project.scripts]
+rag-build-index = "rag_pipeline.cli:build_index"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
