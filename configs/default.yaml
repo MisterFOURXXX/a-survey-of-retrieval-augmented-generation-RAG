@@ -29,17 +29,17 @@ embeddings:
   device: cpu
   normalize: true
 
-embeddings:
-  provider: openai
-  model: text-embedding-3-small
+#embeddings:
+#  provider: openai
+#  model: text-embedding-3-small
 
-embeddings:
-  provider: ollama
-  model: nomic-embed-text
+#embeddings:
+#  provider: ollama
+#  model: nomic-embed-text
 
-embeddings:
-  provider: cohere
-  model: embed-english-light-v3.0
+#embeddings:
+#  provider: cohere
+#  model: embed-english-light-v3.0
 
 vectorstore:
   type: faiss
