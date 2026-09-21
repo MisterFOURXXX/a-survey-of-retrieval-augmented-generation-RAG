@@ -8,10 +8,7 @@ from rag_pipeline.vectorstores import load_vectorstore
 from rag_pipeline.retrieval import build_retriever
 
 emb = build_embeddings({"provider": "huggingface", "model": "BAAI/bge-small-en-v1.5"})
-store = load_vectorstore(emb, {
-    "type": "faiss",
-    "persist_dir": "indexes/faiss_arxiv",
-})
+store = load_vectorstore(emb, {"type": "faiss", "persist_dir": "indexes/faiss_arxiv"})
 
 # %%
 queries = [
@@ -22,35 +19,33 @@ queries = [
 
 # %%
 # Standard similarity
-retriever = build_retriever(store, {"search_type": "similarity", "k": 3})
+r = build_retriever(store, {"search_type": "similarity", "k": 3})
 for q in queries:
     print("Q:", q)
-    for d in retriever.invoke(q):
+    for d in r.invoke(q):
         print(f"  row={d.metadata.get('row')} | {d.page_content[:80]}...")
     print()
 
 # %%
-# MMR (diverse results)
-retriever_mmr = build_retriever(store, {
+# MMR
+r_mmr = build_retriever(store, {
     "search_type": "mmr", "k": 3, "fetch_k": 20, "lambda_mult": 0.5,
 })
-for d in retriever_mmr.invoke(queries[0]):
+for d in r_mmr.invoke(queries[0]):
     print(f"row={d.metadata.get('row')} | {d.page_content[:80]}...")
 
 # %%
-# Score-threshold retrieval
-retriever_thr = build_retriever(store, {
-    "search_type": "similarity_score_threshold",
-    "k": 5,
-    "score_threshold": 0.6,
+# Score-threshold
+r_thr = build_retriever(store, {
+    "search_type": "similarity_score_threshold", "k": 5, "score_threshold": 0.6,
 })
-for d in retriever_thr.invoke(queries[0]):
+for d in r_thr.invoke(queries[0]):
     print(f"row={d.metadata.get('row')} | {d.page_content[:80]}...")
 
 # %%
 # Metadata filter
-retriever_filtered = build_retriever(store, {
+r_fil = build_retriever(store, {
     "search_type": "similarity", "k": 3, "filter": {"row": 2},
 })
-for d in retriever_filtered.invoke(queries[0]):
+for d in r_fil.invoke(queries[0]):
     print(f"row={d.metadata.get('row')} | {d.page_content[:80]}...")

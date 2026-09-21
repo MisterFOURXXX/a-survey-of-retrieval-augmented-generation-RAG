@@ -1,4 +1,4 @@
-"""Text splitter factory."""
+"""Text splitter factory (recursive, character, token, HTML, code, JSON, semantic)."""
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
@@ -13,7 +13,7 @@ from langchain_text_splitters import (
 from rag_pipeline.utils import logger
 
 
-def _build_recursive(cfg: Dict[str, Any]):
+def _build_recursive(cfg):
     return RecursiveCharacterTextSplitter(
         chunk_size=cfg.get("chunk_size", 1000),
         chunk_overlap=cfg.get("chunk_overlap", 200),
@@ -22,7 +22,7 @@ def _build_recursive(cfg: Dict[str, Any]):
     )
 
 
-def _build_character(cfg: Dict[str, Any]):
+def _build_character(cfg):
     return CharacterTextSplitter(
         separator=cfg.get("separator", "\n\n"),
         chunk_size=cfg.get("chunk_size", 1000),
@@ -30,7 +30,7 @@ def _build_character(cfg: Dict[str, Any]):
     )
 
 
-def _build_token(cfg: Dict[str, Any]):
+def _build_token(cfg):
     return TokenTextSplitter(
         chunk_size=cfg.get("chunk_size", 512),
         chunk_overlap=cfg.get("chunk_overlap", 50),
@@ -38,19 +38,16 @@ def _build_token(cfg: Dict[str, Any]):
     )
 
 
-def _build_html(cfg: Dict[str, Any]):
+def _build_html(cfg):
     from langchain_text_splitters import HTMLHeaderTextSplitter
-
-    headers = cfg.get(
-        "headers_to_split_on",
-        [("h1", "Header 1"), ("h2", "Header 2"), ("h3", "Header 3")],
-    )
+    headers = cfg.get("headers_to_split_on", [
+        ("h1", "Header 1"), ("h2", "Header 2"), ("h3", "Header 3"),
+    ])
     return HTMLHeaderTextSplitter(headers_to_split_on=headers)
 
 
-def _build_code(cfg: Dict[str, Any]):
+def _build_code(cfg):
     from langchain_text_splitters import Language, RecursiveCharacterTextSplitter
-
     language = cfg.get("language", "python")
     try:
         return RecursiveCharacterTextSplitter.from_language(
@@ -62,14 +59,11 @@ def _build_code(cfg: Dict[str, Any]):
         return _build_recursive(cfg)
 
 
-def _build_semantic(cfg: Dict[str, Any]):
+def _build_semantic(cfg):
     from langchain_experimental.text_splitter import SemanticChunker
-
     embeddings = cfg.get("_embeddings")
     if embeddings is None:
-        raise ValueError(
-            "Semantic splitting requires '_embeddings' in the splitting config."
-        )
+        raise ValueError("Semantic splitting requires '_embeddings' in the splitting config.")
     return SemanticChunker(
         embeddings,
         breakpoint_threshold_type=cfg.get("breakpoint_threshold_type", "percentile"),
@@ -77,29 +71,34 @@ def _build_semantic(cfg: Dict[str, Any]):
     )
 
 
+def _build_json(cfg):
+    from langchain_text_splitters import RecursiveJsonSplitter
+    return RecursiveJsonSplitter(
+        max_chunk_size=cfg.get("chunk_size", 1000),
+        min_chunk_size=cfg.get("min_chunk_size", 50),
+    )
+
+
 _BUILDERS = {
     "recursive": _build_recursive,
     "character": _build_character,
-    "token": _build_token,
-    "html": _build_html,
-    "code": _build_code,
-    "semantic": _build_semantic,
+    "token":     _build_token,
+    "html":      _build_html,
+    "code":      _build_code,
+    "semantic":  _build_semantic,
+    "json":      _build_json,
 }
 
 
-def build_splitter(cfg: Dict[str, Any]):
+def build_splitter(cfg):
     kind = cfg.get("type", "recursive")
     if kind not in _BUILDERS:
-        raise ValueError(f"Unknown splitter type: {kind}. Options: {list(_BUILDERS)}")
+        raise ValueError(f"Unknown splitter: {kind}. Options: {list(_BUILDERS)}")
     return _BUILDERS[kind](cfg)
 
 
-def split_documents(
-    documents: List[Document],
-    cfg: Optional[Dict[str, Any]] = None,
-) -> List[Document]:
+def split_documents(documents, cfg=None):
     cfg = cfg or {}
-    splitter = build_splitter(cfg)
-    chunks = splitter.split_documents(documents)
+    chunks = build_splitter(cfg).split_documents(documents)
     logger.info("Split %d docs into %d chunks", len(documents), len(chunks))
     return chunks

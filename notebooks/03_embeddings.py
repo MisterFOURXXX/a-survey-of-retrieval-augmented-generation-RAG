@@ -6,15 +6,12 @@
 from rag_pipeline.embeddings import build_embeddings
 
 # %%
-# Hugging Face (default, local)
+# HuggingFace (default, local)
 hf = build_embeddings({
-    "provider": "huggingface",
-    "model": "BAAI/bge-small-en-v1.5",
-    "device": "cpu",
-    "normalize": True,
+    "provider": "huggingface", "model": "BAAI/bge-small-en-v1.5",
+    "device": "cpu", "normalize": True,
 })
-v = hf.embed_query("What is a neural network?")
-print("dim:", len(v))
+print("dim:", len(hf.embed_query("What is a neural network?")))
 
 # %%
 # OpenAI
@@ -24,9 +21,8 @@ print("dim:", len(v))
 # print(len(openai_emb.embed_query("test")))
 
 # %%
-# Ollama (local, requires `ollama serve` + `ollama pull nomic-embed-text`)
-# ollama_emb = build_embeddings({"provider": "ollama",
-#                                "model": "nomic-embed-text"})
+# Ollama (local; requires `ollama serve` + `ollama pull nomic-embed-text`)
+# ollama_emb = build_embeddings({"provider": "ollama", "model": "nomic-embed-text"})
 # print(len(ollama_emb.embed_query("test")))
 
 # %%

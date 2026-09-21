@@ -1,34 +1,11 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-.eggs/
-build/
-dist/
+*.pyc
 .venv/
-venv/
-env/
-
-# Environment
 .env
-
-# Jupyter
 .ipynb_checkpoints/
-
-# Caches
+data/*
+!data/.gitkeep
+indexes/*
+!indexes/.gitkeep
 .cache/
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
-
-# Project artifacts
-data/
-indexes/
-ollama.log
 *.log
-
-# OS / editors
-.DS_Store
-.idea/
-.vscode/

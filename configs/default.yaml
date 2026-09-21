@@ -3,23 +3,12 @@ data:
     - type: csv
       path: data/arxiv_data.csv
       content_columns: [abstracts]
-    - type: pdf
-      path: data/paper.pdf
-    - type: json
-      path: data/drake_data.json
-      jq_schema: ".[] | .lyrics"
-    - type: web
-      urls:
-        - https://en.wikipedia.org/wiki/Python_(programming_language)
-      parse_only_classes: [firstHeading, mw-parser-output]
 
 cleaning:
   min_length: 50
   max_length: 10000
   remove_patterns:
     - "Page \\d+ of \\d+"
-    - "Copyright (c).*"
-    - "All rights reserved.*"
 
 metadata:
   enrich: true
@@ -41,31 +30,14 @@ vectorstore:
   persist_dir: indexes/faiss_index
   collection_name: arxiv_abstracts
   metric: cosine
-  index_type: IndexFlatIP
-  hnsw_m: 32
-  hnsw_ef_construction: 100
-  hnsw_ef_search: 64
 
 retrieval:
   search_type: similarity
   k: 3
-  fetch_k: 20
-  lambda_mult: 0.5
-  score_threshold: 0.5
-  filter: null
 
 llm:
   models:
     - name: Llama-3.1-8B-Instruct
       hf_path: meta-llama/Llama-3.1-8B-Instruct
       max_new_tokens: 200
-      temperature: 0.35
-      top_p: 0.92
-      repetition_penalty: 1.05
       load_in_4bit: true
-
-evaluation:
-  perplexity_model: gpt2
-  bertscore_model: bert-base-uncased
-  semantic_model: sentence-transformers/all-MiniLM-L6-v2
-  nli_model: roberta-large-mnli

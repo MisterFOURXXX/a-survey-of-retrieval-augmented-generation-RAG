@@ -1,4 +1,5 @@
-"""Prompt templates for RAG, CoT, ReAct, ToT, few-shot, etc."""
+"""Prompt templates: RAG, CoT, Zero-shot, Few-shot, ReAct, ToT, Reasoning,
+Structured output, Conversation."""
 
 RAG_PROMPT_TEMPLATE = """You are a scientific research assistant specialized in summarizing and explaining arXiv papers.
 Use ONLY the retrieved abstracts below to answer the question.
@@ -154,3 +155,22 @@ Question: {question}
 Answer with context awareness:<|eot_id|>
 
 <|start_header_id|>assistant<|end_header_id|>"""
+
+
+PROMPT_REGISTRY = {
+    "rag":          RAG_PROMPT_TEMPLATE,
+    "cot":          COT_PROMPT,
+    "zero_shot":    ZERO_SHOT_PROMPT,
+    "few_shot":     FEW_SHOT_PROMPT,
+    "react":        REACT_PROMPT,
+    "tot":          TOT_PROMPT,
+    "reasoning":    REASONING_TEMPLATE,
+    "structured":   STRUCTURED_OUTPUT_PROMPT,
+    "conversation": CONVERSATION_PROMPT,
+}
+
+
+def get_prompt(name: str) -> str:
+    if name not in PROMPT_REGISTRY:
+        raise ValueError(f"Unknown prompt: {name}. Options: {list(PROMPT_REGISTRY)}")
+    return PROMPT_REGISTRY[name]
