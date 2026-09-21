@@ -15,8 +15,8 @@ print("dim:", len(hf.embed_query("What is a neural network?")))
 
 # %%
 # OpenAI
-# import os; os.environ["OPENAI_API_KEY"] = "..."
-# openai_emb = build_embeddings({"provider": "openai",
+import os; os.environ["OPENAI_API_KEY"] = "..."
+openai_emb = build_embeddings({"provider": "openai",
 #                                "model": "text-embedding-3-small"})
 # print(len(openai_emb.embed_query("test")))
 
