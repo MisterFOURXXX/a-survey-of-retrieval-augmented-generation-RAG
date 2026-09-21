@@ -1,8 +1,12 @@
 data:
+  sample_fraction: 0.1
+  sample_size: null
+  sample_seed: 42
+
   sources:
     - type: csv
       path: data/arxiv_data.csv
-      content_columns: [abstracts]
+      content_columns: [summaries]
 
 cleaning:
   min_length: 50

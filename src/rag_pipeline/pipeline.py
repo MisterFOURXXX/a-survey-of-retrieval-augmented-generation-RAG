@@ -44,7 +44,14 @@ class RAGPipeline:
         return self.embeddings
 
     def load_and_split(self) -> List[Document]:
-        docs = load_documents(self.config.data.get("sources", []))
+        data_cfg = self.config.data or {}
+        docs = load_documents(
+            sources=data_cfg.get("sources", []),
+            sample_fraction=data_cfg.get("sample_fraction"),
+            sample_size=data_cfg.get("sample_size"),
+            sample_seed=data_cfg.get("sample_seed", 42),
+        )
+
         if self.config.cleaning:
             docs = clean_and_filter_documents(docs, **self.config.cleaning)
         if self.config.metadata.get("enrich"):

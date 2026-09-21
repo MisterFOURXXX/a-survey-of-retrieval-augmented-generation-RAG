@@ -1,6 +1,7 @@
 """Document loaders for all supported source types."""
 from __future__ import annotations
 
+import random
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional
 
@@ -138,11 +139,61 @@ def load_source(spec):
     return _LOADER_DISPATCH[kind](**spec)
 
 
-def load_documents(sources):
-    docs = []
+def _sample_documents(
+    docs: List[Document],
+    fraction: Optional[float],
+    size: Optional[int],
+    seed: int = 42,
+) -> List[Document]:
+    """Randomly sample documents.
+
+    Priority:
+      - If `size` is set, keep exactly `size` documents (capped at len(docs)).
+      - Else if `fraction` is set (0 < fraction <= 1), keep round(fraction * len(docs)).
+      - Else return docs unchanged.
+
+    Uses `random.Random(seed)` so results are reproducible across runs.
+    """
+    total = len(docs)
+    if total == 0:
+        return docs
+
+    if size is not None:
+        n = min(int(size), total)
+    elif fraction is not None:
+        if not (0 < float(fraction) <= 1):
+            raise ValueError(f"sample_fraction must be in (0, 1], got {fraction}")
+        n = max(1, int(round(float(fraction) * total)))
+    else:
+        return docs
+
+    if n >= total:
+        logger.info("Sampling requested but n=%d >= total=%d — keeping all.", n, total)
+        return docs
+
+    rng = random.Random(seed)
+    sampled = rng.sample(docs, n)
+    logger.info("Sampled %d / %d documents (fraction=%s, size=%s, seed=%d)",
+                n, total, fraction, size, seed)
+    return sampled
+
+
+def load_documents(sources, sample_fraction=None, sample_size=None,
+                   sample_seed=42):
+    """Load and concatenate all sources, then optionally sample.
+
+    Args:
+        sources:        List of source specs (see `_LOADER_DISPATCH`).
+        sample_fraction: Keep this fraction of the *combined* corpus (0 < f <= 1).
+        sample_size:    Keep exactly this many documents (overrides fraction).
+        sample_seed:    RNG seed for reproducibility.
+    """
+    docs: List[Document] = []
     for s in sources:
         docs.extend(load_source(s))
     logger.info("Loaded %d documents from %d source(s)", len(docs), len(sources))
+
+    docs = _sample_documents(docs, sample_fraction, sample_size, sample_seed)
     return docs
 
 
