@@ -30,3 +30,5 @@ python-dotenv>=1.0
 tqdm>=4.66
 pydantic>=2.8
 jupytext>=1.16
+langchain-experimental
+jq
