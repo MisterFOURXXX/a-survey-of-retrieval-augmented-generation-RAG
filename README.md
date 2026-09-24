@@ -1,18 +1,15 @@
 # A Survey of Retrieval-Augmented Generation (RAG)
 
+> A modular, config-driven implementation of a Retrieval-Augmented Generation (RAG) pipeline built on **LangChain**. It covers eight stages: data ingestion, chunking, embedding, vector stores, retrieval, generation & prompt engineering, conversation memory, and evaluation — with reproducible experiment notebooks on real datasets.
+
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![LangChain](https://img.shields.io/badge/LangChain-0.3-green.svg)](https://python.langchain.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![LangChain](https://img.shields.io/badge/LangChain-0.1%2B-green.svg)](https://python.langchain.com/)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-transformers-yellow.svg)](https://huggingface.co/docs/transformers)
+[![FAISS](https://img.shields.io/badge/FAISS-vector%20search-blueviolet.svg)](https://faiss.ai/)
+[![Chroma](https://img.shields.io/badge/Chroma-vector%20store-orange.svg)](https://docs.trychroma.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A modular, config-driven implementation of a **Retrieval-Augmented Generation (RAG)** pipeline built on top of LangChain. This repository accompanies a survey of RAG foundations, methods, and evaluation techniques. It refactors the original tutorial notebook into a reusable Python package with focused experiment notebooks.
-
-The goal is twofold:
-
-1. **Reproducible research** — every stage of the RAG pipeline is isolated, configurable, and independently evaluable.
-2. **Pedagogical clarity** — each notebook walks through one design decision (chunking, embedding, retrieval, prompting, evaluation) with concrete examples on real datasets.
-
----
+----
 
 ## Table of Contents
 
